@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – Influencer Marketing Platform</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-white text-gray-800">
+  <!-- Navigation -->
+  <nav class="bg-indigo-600 text-white p-4 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <img src="" alt="Logo" class="logo-img h-6 w-auto mr-2 hidden" />
+      <div class="text-xl font-bold nav-title" data-base="">TAIPPA</div>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <a href="pricing.html" class="hover:underline">Pricing</a>
+      <a href="index.html" class="bg-white text-indigo-600 px-3 py-1 rounded hover:bg-gray-200">Login</a>
+    </div>
+  </nav>
+
+  <!-- Hero section -->
+  <section class="py-16 px-4 text-center bg-gray-50">
+    <h1 class="text-4xl font-extrabold mb-4 site-title">Unlock Influencer Marketing Success</h1>
+    <p class="max-w-2xl mx-auto text-lg text-gray-700 mb-8 site-tagline">TAIPPA combines AI insights with powerful automation to connect brands with the perfect influencers, manage campaigns, and maximise ROI.</p>
+    <a href="pricing.html" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-indigo-500">Get Started</a>
+  </section>
+
+  <!-- Features section -->
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Key Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="p-6 border rounded shadow-sm">
+          <h3 class="text-xl font-semibold mb-2">AI-Powered Matching</h3>
+          <p>Leverage advanced algorithms to match your brand with high-impact influencers, driving authentic engagement.</p>
+        </div>
+        <div class="p-6 border rounded shadow-sm">
+          <h3 class="text-xl font-semibold mb-2">Campaign Automation</h3>
+          <p>Streamline outreach, collaboration and reporting with automated workflows tailored to your objectives.</p>
+        </div>
+        <div class="p-6 border rounded shadow-sm">
+          <h3 class="text-xl font-semibold mb-2">Real-Time Analytics</h3>
+          <p>Gain actionable insights into campaign performance with interactive dashboards and ROI tracking.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact form section -->
+  <section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-6">Get in Touch</h2>
+      <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+        <form id="lead-form" class="space-y-4" onsubmit="handleLeadSubmit(event)">
+          <div>
+            <label class="block text-sm font-medium">Name</label>
+            <input type="text" id="lead-name" required class="mt-1 block w-full px-3 py-2 border rounded" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Email</label>
+            <input type="email" id="lead-email" required class="mt-1 block w-full px-3 py-2 border rounded" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Company</label>
+            <input type="text" id="lead-company" class="mt-1 block w-full px-3 py-2 border rounded" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Message</label>
+            <textarea id="lead-message" class="mt-1 block w-full px-3 py-2 border rounded"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 rounded">Submit</button>
+        </form>
+        <p id="lead-response" class="mt-4 text-center text-green-600 hidden">Thank you! We will be in touch shortly.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTenantAppearance();
+      // Attach lead form submission handler (already bound via inline onsubmit)
+    });
+  </script>
+</body>
+</html>

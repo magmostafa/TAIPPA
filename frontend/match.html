@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – AI Matching</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <img src="" alt="Logo" class="logo-img h-6 w-auto mr-2 hidden" />
+      <h1 class="text-lg font-semibold nav-title" data-base="Matching">TAIPPA Matching</h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="dashboard.html" class="underline">Dashboard</a>
+      <button id="logout" class="bg-indigo-500 px-3 py-1 rounded">Logout</button>
+    </div>
+  </nav>
+  <div class="container mx-auto px-4 py-6">
+    <h2 class="text-xl font-semibold mb-4">AI Influencer Matching</h2>
+    <p class="text-gray-700 mb-4">Select one of your brands to receive intelligent influencer recommendations.  The AI engine analyses brand information and influencer profiles to rank potential partners.</p>
+    <div class="bg-white p-4 rounded shadow mb-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Brand</label>
+        <select id="match-brand-id" class="w-full px-3 py-2 border rounded"></select>
+      </div>
+      <div>
+        <button id="match-button" class="bg-indigo-600 text-white px-4 py-2 rounded">Find Influencers</button>
+      </div>
+    </div>
+    <div id="match-results" class="bg-white p-4 rounded shadow hidden">
+      <h3 class="text-lg font-semibold mb-3">Recommendations</h3>
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="border-b">
+            <th class="px-2 py-2 text-left">Influencer</th>
+            <th class="px-2 py-2 text-left">Platform</th>
+            <th class="px-2 py-2 text-left">Followers</th>
+            <th class="px-2 py-2 text-left">Engagement (%)</th>
+            <th class="px-2 py-2 text-left">Score</th>
+            <th class="px-2 py-2 text-left">Explanation</th>
+          </tr>
+        </thead>
+        <tbody id="matches-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTenantAppearance();
+      await loadCurrentUser();
+      await loadMatchBrands();
+      document.getElementById('match-button').addEventListener('click', findInfluencerMatches);
+    });
+  </script>
+</body>
+</html>

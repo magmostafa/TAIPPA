@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-50 flex items-center justify-center h-screen">
+  <div class="w-full max-w-md p-8 bg-white rounded shadow">
+    <h1 class="text-2xl font-semibold mb-6 text-center site-title">TAIPPA Login</h1>
+    <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="email" required class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" required class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+      </div>
+      <div>
+        <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Login</button>
+      </div>
+    </form>
+    <p id="error" class="text-red-500 mt-4 hidden"></p>
+
+    <div class="mt-6 text-center text-sm">
+      <span class="text-gray-700">Don't have an account?</span>
+      <a href="register.html" class="text-indigo-600 hover:underline">Register</a>
+    </div>
+  </div>
+  <script src="app.js"></script>
+  <script>
+    // Apply tenant branding on page load.  This call ensures the login page
+    // reflects any custom white‑label settings defined by the tenant.
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTenantAppearance();
+    });
+  </script>
+</body>
+</html>

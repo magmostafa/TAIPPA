@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – Analytics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <img src="" alt="Logo" class="logo-img h-6 w-auto mr-2 hidden" />
+      <h1 class="text-lg font-semibold nav-title" data-base="Analytics">TAIPPA Analytics</h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <span id="user-name" class="hidden md:inline-block"></span>
+      <button id="logout" class="bg-indigo-500 px-3 py-1 rounded hover:bg-indigo-400">Logout</button>
+    </div>
+  </nav>
+  <div class="container mx-auto px-4 py-6">
+    <h2 class="text-xl font-semibold mb-6">Influencer Segmentation</h2>
+    <div class="mb-4 flex items-center space-x-4">
+      <label for="cluster-count" class="block text-sm font-medium text-gray-700">Number of clusters:</label>
+      <select id="cluster-count" class="border border-gray-300 rounded px-2 py-1">
+        <!-- Options 2-10 -->
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5" selected>5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+      <button id="run-clustering" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500">Compute Segments</button>
+    </div>
+    <div id="analytics-result" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cluster</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Followers</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Engagement %</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Likes</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Comments</th>
+          </tr>
+        </thead>
+        <tbody id="analytics-body" class="bg-white divide-y divide-gray-200">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTenantAppearance();
+      await loadCurrentUser();
+      document.getElementById('logout').addEventListener('click', handleLogout);
+      document.getElementById('run-clustering').addEventListener('click', runClustering);
+    });
+  </script>
+</body>
+</html>

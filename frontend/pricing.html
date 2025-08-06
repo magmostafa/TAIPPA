@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – Pricing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <img src="" alt="Logo" class="logo-img h-6 w-auto mr-2 hidden" />
+      <h1 class="text-lg font-semibold nav-title" data-base="Pricing">TAIPPA Pricing</h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="dashboard.html" class="underline">Dashboard</a>
+      <button id="logout" class="bg-indigo-500 px-3 py-1 rounded">Logout</button>
+    </div>
+  </nav>
+  <div class="container mx-auto px-4 py-6">
+    <div id="pricing-alert"></div>
+    <h2 class="text-xl font-semibold mb-4">Choose Your Plan</h2>
+    <div id="subscription-info" class="mb-6"></div>
+    <div id="plans-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTenantAppearance();
+      await loadCurrentUser();
+      await loadPricing();
+    });
+  </script>
+</body>
+</html>

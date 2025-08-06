@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAIPPA – Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-Von7C1VGZrLlze8a14FN9/Ga4Lz+HFrB0Qkls0jW9IywGkNgsr+3YsJTK2Pz7K6w/ZKm9gOr7NS/mc4EeG7s2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <!-- Logo image will be populated by tenant branding if provided -->
+      <img src="" alt="Logo" class="logo-img h-6 w-auto mr-2 hidden" />
+      <h1 class="text-lg font-semibold nav-title" data-base="Dashboard">TAIPPA Dashboard</h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <span id="user-name" class="hidden md:inline-block"></span>
+      <button id="logout" class="bg-indigo-500 px-3 py-1 rounded hover:bg-indigo-400">Logout</button>
+    </div>
+  </nav>
+  <div class="container mx-auto px-4 py-6">
+    <h2 class="text-xl font-semibold mb-6">Overview</h2>
+    <!-- Summary cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
+      <a href="brands.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Brands</h3>
+        <p class="text-sm text-gray-600 mb-4">Manage your brand profiles.</p>
+        <div class="text-3xl font-bold text-indigo-600" id="count-brands">0</div>
+      </a>
+      <a href="campaigns.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Campaigns</h3>
+        <p class="text-sm text-gray-600 mb-4">View and create campaigns.</p>
+        <div class="text-3xl font-bold text-indigo-600" id="count-campaigns">0</div>
+      </a>
+      <a href="influencers.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Influencers</h3>
+        <p class="text-sm text-gray-600 mb-4">Search and manage influencers.</p>
+        <div class="text-3xl font-bold text-indigo-600" id="count-influencers">0</div>
+      </a>
+      <!-- Leads card: visible to admin/team members; count loaded via API -->
+      <a href="leads.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Leads</h3>
+        <p class="text-sm text-gray-600 mb-4">View and manage captured leads.</p>
+        <div class="text-3xl font-bold text-indigo-600" id="count-leads">0</div>
+      </a>
+      <!-- AI Matching card -->
+      <a href="match.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">AI Matching</h3>
+        <p class="text-sm text-gray-600 mb-4">Find the best influencers for your brand.</p>
+        <div class="text-3xl font-bold text-indigo-600">⚡</div>
+      </a>
+      <!-- Discovery card -->
+      <a href="influencer_search.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Discovery</h3>
+        <p class="text-sm text-gray-600 mb-4">Search our enriched influencer database.</p>
+        <div class="text-3xl font-bold text-indigo-600">🔍</div>
+      </a>
+      <!-- Analytics card -->
+      <a href="analytics.html" class="p-6 bg-white rounded shadow hover:shadow-lg block">
+        <h3 class="text-lg font-bold mb-2">Analytics</h3>
+        <p class="text-sm text-gray-600 mb-4">Segment influencers with AI clustering.</p>
+        <div class="text-3xl font-bold text-indigo-600">📊</div>
+      </a>
+    </div>
+    <!-- Campaign status chart -->
+    <div class="bg-white rounded shadow p-6">
+      <h3 class="text-lg font-bold mb-4">Campaign Status Distribution</h3>
+      <canvas id="status-chart" width="400" height="200"></canvas>
+    </div>
+  </div>
+  <!-- Chart.js for dashboards -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" integrity="sha256-8Yj1bGPvdBj01tWEKeyVbp1k5+SYGaG6P7UlKJDrObk=" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadTenantAppearance();
+      await loadCurrentUser();
+      await loadDashboard();
+    });
+  </script>
+</body>
+</html>
