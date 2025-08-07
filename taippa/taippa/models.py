@@ -20,10 +20,16 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
 
-# New model for multi‑tenant support.  A tenant represents an isolated client
-# environment within the TAIPPA platform.  All user accounts and data
-# objects belong to a tenant, enabling data isolation and customisation.
+
+# ---------------------------------------------------------------------------
+# Tenancy and User Models
+# ---------------------------------------------------------------------------
+
 class Tenant(Base):
+    """Represents an isolated client environment. All users and data objects
+    belong to a tenant, enabling data isolation and customisation.
+    """
+
     __tablename__ = "tenants"
 
     id: Mapped[str] = mapped_column(
@@ -35,23 +41,18 @@ class Tenant(Base):
     primary_color: Mapped[str | None] = mapped_column(String(length=20), nullable=True)
     secondary_color: Mapped[str | None] = mapped_column(String(length=20), nullable=True)
 
-    # Enterprise white‑label customisation fields.  These optional fields allow
-    # tenants to configure the appearance and messaging of their instance of
-    # TAIPPA.  They can override the site name displayed in navigation bars,
-    # define a tagline shown on landing pages, specify a custom footer message
-    # and provide arbitrary feature flags or settings encoded as JSON.  A
-    # tenant can also supply custom CSS to further tweak the look and feel.
+    # Enterprise white‑label customisation fields
     site_name: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
     tagline: Mapped[str | None] = mapped_column(String(length=255), nullable=True)
     footer_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     features: Mapped[str | None] = mapped_column(Text, nullable=True)
     custom_css: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                 default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                 default=datetime.utcnow,
+                                                 onupdate=datetime.utcnow)
 
     # Relationships
     users: Mapped[list["User"]] = relationship(
@@ -72,12 +73,7 @@ class Tenant(Base):
 
 
 class RoleEnum(str, enum.Enum):
-    """Enumeration of user roles.
-
-    The system defines several built‑in roles: `admin` (full access), `client`
-    (owns brands and campaigns), `team_member` (collaborates on campaigns) and
-    `viewer` (read‑only access).
-    """
+    """Enumeration of user roles."""
 
     admin = "admin"
     client = "client"
@@ -86,12 +82,7 @@ class RoleEnum(str, enum.Enum):
 
 
 class User(Base):
-    """Represents a user of the TAIPPA platform.
-
-    Users authenticate via username/email and password.  A hashed password is
-    stored, not the plain text.  Each user has one or more roles which
-    determine their permissions within the system.
-    """
+    """Represents a user of the TAIPPA platform."""
 
     __tablename__ = "users"
 
@@ -102,30 +93,29 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(length=255))
     full_name: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
     role: Mapped[RoleEnum] = mapped_column(Enum(RoleEnum), default=RoleEnum.client)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
-    # tenant relationship: each user belongs to a tenant, enabling multi‑tenant
-    # data isolation.  Clients may have their own tenant while super admins can
-    # manage multiple tenants.
+
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="users")
 
     # relationships
-    brands: Mapped[list[Brand]] = relationship(
+    brands: Mapped[list["Brand"]] = relationship(
         "Brand", back_populates="owner", cascade="all, delete-orphan"
     )
 
 
-class Brand(Base):
-    """Represents a brand profile within the system.
+# ---------------------------------------------------------------------------
+# Brand & Campaign Models
+# ---------------------------------------------------------------------------
 
-    Brands belong to clients and can be associated with multiple campaigns.
-    A brand holds metadata about the company's identity and target audience.
-    """
+class Brand(Base):
+    """Represents a brand profile within the system."""
 
     __tablename__ = "brands"
 
@@ -139,6 +129,7 @@ class Brand(Base):
     contact_email: Mapped[str | None] = mapped_column(String(length=320), nullable=True)
     target_audience: Mapped[str | None] = mapped_column(Text, nullable=True)
     budget: Mapped[float | None] = mapped_column(Float, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
@@ -146,13 +137,11 @@ class Brand(Base):
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    # relationships
-    owner: Mapped[User] = relationship("User", back_populates="brands")
-    campaigns: Mapped[list[Campaign]] = relationship(
+    owner: Mapped["User"] = relationship("User", back_populates="brands")
+    campaigns: Mapped[list["Campaign"]] = relationship(
         "Campaign", back_populates="brand", cascade="all, delete-orphan"
     )
 
-    # Multi‑tenant: link brand to tenant for isolation
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="brands")
 
@@ -168,12 +157,7 @@ class CampaignStatus(str, enum.Enum):
 
 
 class Campaign(Base):
-    """Represents an influencer marketing campaign.
-
-    Campaigns belong to brands and can have multiple milestones and metrics.  The
-    `brief` field stores the free‑form brief provided by the client, while
-    `analysis` stores the structured analysis generated by the AI engine.
-    """
+    """Represents an influencer marketing campaign."""
 
     __tablename__ = "campaigns"
 
@@ -186,10 +170,13 @@ class Campaign(Base):
     status: Mapped[CampaignStatus] = mapped_column(
         Enum(CampaignStatus), default=CampaignStatus.draft
     )
-    start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),
+                                                        nullable=True)
+    end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),
+                                                      nullable=True)
     budget: Mapped[float | None] = mapped_column(Float, nullable=True)
     analysis: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
@@ -197,21 +184,18 @@ class Campaign(Base):
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    # relationships
-    brand: Mapped[Brand] = relationship("Brand", back_populates="campaigns")
+    brand: Mapped["Brand"] = relationship("Brand", back_populates="campaigns")
 
-    # Multi‑tenant: link campaign to tenant for isolation
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="campaigns")
 
 
-class Influencer(Base):
-    """Represents an influencer profile in the system.
+# ---------------------------------------------------------------------------
+# Influencer & Subscription Models
+# ---------------------------------------------------------------------------
 
-    In a full implementation this model would include social media metrics,
-    engagement statistics, pricing, and historical collaboration data.  Only a
-    handful of fields are defined here for demonstration purposes.
-    """
+class Influencer(Base):
+    """Represents an influencer profile in the system."""
 
     __tablename__ = "influencers"
 
@@ -223,20 +207,22 @@ class Influencer(Base):
     platform: Mapped[str] = mapped_column(String(length=50))
     followers: Mapped[int | None] = mapped_column(Integer, nullable=True)
     engagement_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
-    # Additional enrichment fields.  These fields are populated by the influencer
-    # discovery and enrichment pipeline to provide deeper insights and
-    # filtering capabilities.  All fields are optional because data may not
-    # be available for every influencer.
+
+    # Enrichment fields
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     topics: Mapped[str | None] = mapped_column(Text, nullable=True)
     country: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
     language: Mapped[str | None] = mapped_column(String(length=50), nullable=True)
     avg_likes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     avg_comments: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    audience_country: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
-    audience_gender: Mapped[str | None] = mapped_column(String(length=50), nullable=True)
-    audience_age: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
-    last_updated: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    audience_country: Mapped[str | None] = mapped_column(String(length=100),
+                                                         nullable=True)
+    audience_gender: Mapped[str | None] = mapped_column(String(length=50),
+                                                        nullable=True)
+    audience_age: Mapped[str | None] = mapped_column(String(length=100),
+                                                     nullable=True)
+    last_updated: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),
+                                                          nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
@@ -244,12 +230,9 @@ class Influencer(Base):
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    # Multi‑tenant: link influencer to tenant for isolation
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="influencers")
 
-
-# New models for subscription billing and lead capture
 
 class SubscriptionStatus(str, enum.Enum):
     """Possible states for a subscription."""
@@ -259,10 +242,7 @@ class SubscriptionStatus(str, enum.Enum):
 
 
 class SubscriptionPlan(Base):
-    """Represents a subscription plan offered to users.
-
-    Plans define pricing and feature sets.  Users subscribe to a single plan at a time.
-    """
+    """Represents a subscription plan offered to users."""
 
     __tablename__ = "subscription_plans"
 
@@ -273,13 +253,10 @@ class SubscriptionPlan(Base):
     price: Mapped[float] = mapped_column(Float)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     features: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # Stripe price identifier used for billing.  This field stores the ID of the
-    # corresponding price object in Stripe.  When integrating with a payment
-    # gateway you can create products and prices in Stripe's dashboard and
-    # reference the price ID here.  The backend uses this ID when initiating
-    # checkout sessions.
-    stripe_price_id: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
+    stripe_price_id: Mapped[str | None] = mapped_column(String(length=100),
+                                                        nullable=True)
     active: Mapped[bool] = mapped_column(default=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
@@ -289,10 +266,7 @@ class SubscriptionPlan(Base):
 
 
 class Subscription(Base):
-    """Represents a user's subscription to a plan.
-
-    A subscription links a user to a plan and records start/end dates and status.
-    """
+    """Represents a user's subscription to a plan."""
 
     __tablename__ = "subscriptions"
 
@@ -300,12 +274,16 @@ class Subscription(Base):
         String(length=36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
-    plan_id: Mapped[str] = mapped_column(ForeignKey("subscription_plans.id"), index=True)
-    start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
-    end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    plan_id: Mapped[str] = mapped_column(ForeignKey("subscription_plans.id"),
+                                         index=True)
+    start_date: Mapped[datetime] = mapped_column(DateTime(timezone=True),
+                                                 default=datetime.utcnow)
+    end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),
+                                                      nullable=True)
     status: Mapped[SubscriptionStatus] = mapped_column(
         Enum(SubscriptionStatus), default=SubscriptionStatus.active
     )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )
@@ -313,16 +291,30 @@ class Subscription(Base):
         DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    # Multi‑tenant: link subscription to tenant for isolation.  Although plans may be
-    # global, subscriptions belong to a tenant via the user.
+    # Link subscription to tenant via the user (subscriptions belong to a tenant)
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant")
+
+
+# ---------------------------------------------------------------------------
+# Lead Models
+# ---------------------------------------------------------------------------
+
+class LeadStatus(str, enum.Enum):
+    """Lead statuses for the sales pipeline."""
+
+    new = "new"
+    contacted = "contacted"
+    qualified = "qualified"
+    won = "won"
+    lost = "lost"
 
 
 class Lead(Base):
     """Represents a marketing lead captured from the website."""
 
     __tablename__ = "leads"
+
     id: Mapped[str] = mapped_column(
         String(length=36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
@@ -330,13 +322,6 @@ class Lead(Base):
     email: Mapped[str] = mapped_column(String(length=320))
     company: Mapped[str | None] = mapped_column(String(length=100), nullable=True)
     message: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # lead status for sales pipeline
-    class LeadStatus(str, enum.Enum):
-        new = "new"
-        contacted = "contacted"
-        qualified = "qualified"
-        won = "won"
-        lost = "lost"
 
     status: Mapped[LeadStatus] = mapped_column(
         Enum(LeadStatus), default=LeadStatus.new
@@ -346,6 +331,5 @@ class Lead(Base):
         DateTime(timezone=True), default=datetime.utcnow
     )
 
-    # Multi‑tenant: link lead to tenant for isolation
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="leads")
