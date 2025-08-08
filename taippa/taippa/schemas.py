@@ -251,13 +251,16 @@ class LeadUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class LeadRead(LeadBase):
+lclass LeadRead(LeadBase):
+    id: str
     created_at: datetime
-        id: str
 
     model_config = {
         "from_attributes": True
     }
+
+
+  
 
 # Tenant schemas for multi‑tenant support
 class TenantBase(BaseModel):
