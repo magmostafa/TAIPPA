@@ -16,7 +16,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 from .models import RoleEnum, CampaignStatus
-from .models import SubscriptionStatus, Lead
+from .models import SubscriptionStatus, Lead, LeadStatus
 
 
 class Token(BaseModel):
@@ -238,7 +238,7 @@ class LeadBase(BaseModel):
     email: EmailStr
     company: Optional[str] = None
     message: Optional[str] = None
-    status: Optional[Lead.LeadStatus] = None
+    status: Optional[LeadStatus] = None
     notes: Optional[str] = None
 
 
@@ -247,13 +247,13 @@ class LeadCreate(LeadBase):
 
 
 class LeadUpdate(BaseModel):
-    status: Optional[Lead.LeadStatus] = None
+    status: Optional[LeadStatus] = None
     notes: Optional[str] = None
 
 
 class LeadRead(LeadBase):
-    id: str
     created_at: datetime
+        id: str
 
     model_config = {
         "from_attributes": True
