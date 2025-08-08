@@ -21,22 +21,23 @@ from typing import Dict, Any, List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+# Attempt to import external clustering modules; fallback if unavailable
+try:
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.cluster import KMeans
+    import numpy as np
+except ImportError:
+    StandardScaler = None  # type: ignore
+    KMeans = None  # type: ignore
+    np = None  # type: ignore
 
-from ..auth import get_current_user
-from ..database import get_session
-from ..models import Influencer, RoleEnum, User
-
-# Import scikit‑learn modules for clustering
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-import numpy as np
 
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 
 async def _compute_clusters(data: np.ndarray, k: int) -> Dict[str, Any]:
-    """Cluster the data into k groups and compute summary statistics.
+    
 
     Parameters
     ----------
