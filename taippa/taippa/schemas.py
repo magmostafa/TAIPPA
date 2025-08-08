@@ -251,12 +251,11 @@ class LeadUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-lclass LeadRead(LeadBase):
+class LeadRead(LeadBase):
     id: str
     created_at: datetime
-
     model_config = {
-        "from_attributes": True
+    "from_attributes": True
     }
 
 
